@@ -1,23 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useRef ,useEffect } from 'react'
+import { Grid } from '@material-ui/core'
+import { PushToTalkButtonContainer, PushToTalkButton, ErrorPanel } from '@speechly/react-ui'
+import { SpeechState, useSpeechContext } from '@speechly/react-client'
+import Details from './components/Details/Details'
+import Main from './components/Main/Main'
+import useStyles from './styles'
 
 function App() {
+  const classes = useStyles()
+  const main = useRef(null)
+  const { speechState } = useSpeechContext()
+
+  const executeScroll = () => main.current.scrollIntoView()
+ 
+  useEffect(() => {
+    if(speechState === SpeechState.Recording){
+      executeScroll()
+    }
+  },[speechState])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Grid className={classes.grid} container spacing={0} alignItems='center' justifyContent='center' style={{height: '100vh'}}> 
+        
+        <Grid item xs={12} sm={3} className={classes.mobile}>
+          <Details title='income' />
+        </Grid>
+
+        <Grid ref={main} item xs={12} sm={3} className={classes.main}>
+          <Main />
+        </Grid>
+
+        <Grid item xs={12} sm={3} className={classes.desktop}>
+          <Details title='income' />
+        </Grid>
+
+        <Grid item xs={12} sm={3} className={classes.last}>
+          <Details title='expense' />
+        </Grid>
+      </Grid>
+      
+      <PushToTalkButtonContainer>
+        <PushToTalkButton />
+        <ErrorPanel />
+      </PushToTalkButtonContainer>
+      
+      
     </div>
   );
 }
